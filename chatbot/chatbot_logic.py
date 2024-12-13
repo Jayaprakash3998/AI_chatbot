@@ -5,7 +5,7 @@ from langchain_community.llms.ollama import Ollama
 from langchain_core.output_parsers import StrOutputParser
 import json
 from operator import itemgetter
-from guardrails import is_sensitive_query
+from guardrails import guardrails
 
 class Chatbot:
     def __init__(self, model_name="llama3.2-vision"):
@@ -23,6 +23,7 @@ class Chatbot:
         """
         self.prompt_template = PromptTemplate.from_template(self.prompt_data)
         self.output_parser = StrOutputParser()
+        self.guardrail = guardrails()
         
         
     def get_response(self, user_input, context=None):
@@ -39,8 +40,12 @@ class Chatbot:
         
         output = """{"chat_response": "obtained chat response"}"""
         
-        if is_sensitive_query(user_input):
-            return "Sorry, I'm unable to answer queries regarding these contents. Please try a different query."
+        user_intent = self.guardrail.get_intent(user_input_query)
+        
+        if user_intent == "Yes":
+            return "Sorry , I'm not able to provide a response regarding political, harmful, legal and health related topics."
+        
+        
 
         # Format the conversation context
         formatted_context = "\n".join([f"User: {q}\nAssistant: {a}" for q, a in context])
