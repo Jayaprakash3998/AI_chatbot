@@ -26,7 +26,7 @@ if user_input:
     # Display conversation
     for user, assistant in st.session_state.context:
         st.write(f"**You:** {user}")
-        st.write(f"**Gobal:** {assistant}")
+        st.write(f"**🤖Gobal🤖:** {assistant}")
 
 # End Chat Button
 if st.button("End Chat"):
